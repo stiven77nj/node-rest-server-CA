@@ -1,9 +1,10 @@
-import express from "express";
+import express, { Router, response } from "express";
 import path from "path";
 
 interface Options {
     port: number;
     publicPath?: string;
+    router: Router;
 }
 
 /**
@@ -27,13 +28,19 @@ export class Server {
     private readonly publicPath: string;
 
     /**
+     * Propiedad para gestionar las rutas.
+    */
+    private readonly routes: Router;
+
+    /**
      * Metodo constructor.
      * @param options Opciones (Parametros||Argumentos).
      */
     constructor(options: Options) {
-        const { port, publicPath = 'public' } = options;
+        const { port, publicPath = 'public', router } = options;
         this.port = port;
         this.publicPath = publicPath;
+        this.routes = router;
     }
 
     /**
@@ -44,6 +51,17 @@ export class Server {
          * Carpeta publica.
         */
         this.app.use(express.static(this.publicPath));
+
+        /**
+         * Middlewares.
+        */
+        this.app.use(express.json()); // raw
+        this.app.use(express.urlencoded({ extended: true })); // x-www-form-urlencoded
+
+        /**
+         * Rutas
+        */
+        this.app.use(this.routes);
 
         /**
          * Cualquier peticion que sea haga y en caso de 
@@ -58,10 +76,10 @@ export class Server {
         });
 
         /**
-         * Servidor escuchando...
+         * Puerto en el que corre la aplicacion...
         */
         this.app.listen(this.port, () => {
-            console.log(`Server running on port ${ this.port }`);
+            console.log(`Server running on port ${this.port}`);
         })
     }
 }
