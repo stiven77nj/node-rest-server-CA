@@ -1,10 +1,15 @@
-import express, { Router, response } from "express";
+import express, { Router } from "express";
 import path from "path";
 
+
+/**
+ * Interfaz Options.
+ * Interfaz para la configuracion del Servidor.
+ */
 interface Options {
     port: number;
     publicPath?: string;
-    router: Router;
+    routes: Router
 }
 
 /**
@@ -37,10 +42,10 @@ export class Server {
      * @param options Opciones (Parametros||Argumentos).
      */
     constructor(options: Options) {
-        const { port, publicPath = 'public', router } = options;
+        const { port, publicPath = 'public', routes } = options;
         this.port = port;
         this.publicPath = publicPath;
-        this.routes = router;
+        this.routes = routes;
     }
 
     /**
